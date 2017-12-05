@@ -1,0 +1,77 @@
+From 3a5b67d357bedcb1ce8985da70b93740547442b8 Mon Sep 17 00:00:00 2001
+From: Nick Mathewson <nickm@torproject.org>
+Date: Tue, 5 Dec 2017 08:30:26 -0500
+Subject: [PATCH] Change our build process to run Cargo from inside the build
+ tree
+
+Instead of using the cwd to specify the location of Cargo.toml, we
+use the --manifest-path option to specify its location explicitly.
+
+This works around the bug that isis diagnosed on our jenkins builds.
+---
+ changes/cargo-build-problem  |  3 +++
+ src/rust/tor_rust/include.am | 12 ++++++++----
+ src/test/test_rust.sh        |  8 ++++++--
+ 3 files changed, 17 insertions(+), 6 deletions(-)
+ create mode 100644 changes/cargo-build-problem
+
+diff --git a/changes/cargo-build-problem b/changes/cargo-build-problem
+new file mode 100644
+index 00000000000000..75276e746981c9
+--- /dev/null
++++ b/changes/cargo-build-problem
+@@ -0,0 +1,3 @@
++  o Minor bugfixes (compilation, rust):
++    - Build correctly when building from outside Tor's source tree with the
++      TOR_RUST_DEPENDENCIES option set.
+diff --git a/src/rust/tor_rust/include.am b/src/rust/tor_rust/include.am
+index 79361c33cc6f79..c02324cb773075 100644
+--- a/src/rust/tor_rust/include.am
++++ b/src/rust/tor_rust/include.am
+@@ -5,16 +5,20 @@ EXTRA_DIST +=\
+ EXTRA_CARGO_OPTIONS=
+ 
+ src/rust/target/release/@TOR_RUST_STATIC_NAME@: FORCE
+-	( cd "$(abs_top_srcdir)/src/rust/tor_rust" ; \
++	( cd "$(abs_top_builddir)/src/rust" ; \
+ 		CARGO_TARGET_DIR="$(abs_top_builddir)/src/rust/target" \
+ 		CARGO_HOME="$(abs_top_builddir)/src/rust" \
+-		$(CARGO) build --release $(EXTRA_CARGO_OPTIONS) $(CARGO_ONLINE) )
++		$(CARGO) build --release $(EXTRA_CARGO_OPTIONS) \
++	        $(CARGO_ONLINE) \
++                --manifest-path "$(abs_top_srcdir)/src/rust/tor_rust/Cargo.toml" )
+ 
+ distclean-rust:
+-	( cd "$(abs_top_srcdir)/src/rust/tor_rust" ; \
++	( cd "$(abs_top_builddir)/src/rust" ; \
+ 		CARGO_TARGET_DIR="$(abs_top_builddir)/src/rust/target" \
+ 		CARGO_HOME="$(abs_top_builddir)/src/rust" \
+-		$(CARGO) clean $(EXTRA_CARGO_OPTIONS) $(CARGO_ONLINE) )
++		$(CARGO) clean $(EXTRA_CARGO_OPTIONS) \
++	        $(CARGO_ONLINE) \
++                --manifest-path "$(abs_top_srcdir)/src/rust/tor_rust/Cargo.toml" )
+ 	rm -rf "$(abs_top_builddir)/src/rust/registry"
+ 
+ if USE_RUST
+diff --git a/src/test/test_rust.sh b/src/test/test_rust.sh
+index 8d7900e1df3f79..133f2bb940f8e1 100755
+--- a/src/test/test_rust.sh
++++ b/src/test/test_rust.sh
+@@ -8,8 +8,12 @@ exitcode=0
+ set -e
+ 
+ for crate in $crates; do
+-    cd "${abs_top_srcdir:-.}/src/rust/${crate}"
+-    CARGO_TARGET_DIR="${abs_top_builddir:-../../..}/src/rust/target" CARGO_HOME="${abs_top_builddir:-../../..}/src/rust" "${CARGO:-cargo}" test ${CARGO_ONLINE-"--frozen"} || exitcode=1
++    cd "${abs_top_builddir:-../../..}/src/rust"
++    CARGO_TARGET_DIR="${abs_top_builddir:-../../..}/src/rust/target" \
++      CARGO_HOME="${abs_top_builddir:-../../..}/src/rust" \
++      "${CARGO:-cargo}" test ${CARGO_ONLINE-"--frozen"} \
++      --manifest-path "${abs_top_srcdir:-.}/src/rust/${crate}/Cargo.toml" \
++	|| exitcode=1
+     cd -
+ done
+ 
+-- 
+2.14.3
+
