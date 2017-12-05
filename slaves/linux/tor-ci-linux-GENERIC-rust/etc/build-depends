@@ -15,5 +15,3 @@ zlib1g-dev
 
 rustc
 cargo
-
-git
