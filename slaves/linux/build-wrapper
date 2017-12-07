@@ -18,6 +18,7 @@
 
 set -u
 set -e
+set -x
 
 fullpath=$(readlink -f "$0")
 basedir=$(dirname "$fullpath")
