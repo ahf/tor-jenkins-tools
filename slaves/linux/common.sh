@@ -75,7 +75,7 @@ relay_to_remote() {
 					ssh "$NODE_NAME" "mkdir -p $(dirname $fp)"
 					rsync -ravz --delete "$i/." "$NODE_NAME:$fp"
 				done
-				echo "[$hostname] Forwarding build request to $NODE_NAME."
+				echo "[$hostname] Forwarding build request for $what to $NODE_NAME."
 				set -x
 				fp=$(realpath --relative-to=/home/jenkins .)
 				ssh -o BatchMode=yes -tt "$NODE_NAME" "(cd jenkins-tools && git pull) && mkdir -p '$fp' && cd '$fp' && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' JOB_NAME='$JOB_NAME' ~/jenkins-tools/$what"
