@@ -53,7 +53,7 @@ if [ "$#" -ge 1 ] ; then
 fi
 
 init_args
-relay_to_remote "slaves/linux/build-wrapper" "${sync_args[@]}"
+relay_to_remote "${sync_args[@]}" "slaves/linux/build-wrapper"
 
 # Check if we have an schroot by that name
 base_chroot="$SUITE-$ARCHITECTURE-sbuild"
