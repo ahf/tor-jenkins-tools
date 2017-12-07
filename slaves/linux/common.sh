@@ -39,6 +39,7 @@ relay_to_remote() {
 		local what
 		local fp
 		local OPTION
+		local OPTIND
 		local i
 
 		local sync_to_remote=()
