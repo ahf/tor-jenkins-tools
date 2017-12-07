@@ -9,10 +9,7 @@ basedir=$(dirname "$fullpath")
 . "$basedir/common.sh"
 
 init_args
-
-sync_to_remote=("incoming")
-sync_from_remote=("RESULT")
-relay_to_remote "slaves/linux/tor-debian-master-nightly-binaries" sync_to_remote[@] sync_from_remote[@]
+relay_to_remote "slaves/linux/tor-debian-master-nightly-binaries" -t incoming -f RESULT
 
 get_metadata() {
   local dsc="$1"; shift

@@ -29,17 +29,16 @@ cat << EOF
 usage: $0 [-t <sync-to-remote> [-t...]] [-f <sync-from-remote> [-f...]]
 EOF
 }
-sync_to_remote=()
-sync_from_remote=()
+sync_args=()
 while getopts "t:f:" OPTION; do
 	case "$OPTION" in
 		t)
 			check_arg "sync-to-remote argument" "$OPTARG"
-			sync_to_remote+=("$OPTARG")
+			sync_args+=("-t" "$OPTARG")
 			;;
 		f)
 			check_arg "sync-from-remote argument" "$OPTARG"
-			sync_from_remote+=("$OPTARG")
+			sync_args+=("-f" "$OPTARG")
 			;;
 		*)
 			echo >&2 "Invalid option $OPTION"
@@ -53,7 +52,7 @@ if [ "$#" -ge 1 ] ; then
 fi
 
 init_args
-relay_to_remote "slaves/linux/build-wrapper" sync_to_remote[@] sync_from_remote[@]
+relay_to_remote "slaves/linux/build-wrapper" "${sync_args[@]}"
 
 # Check if we have an schroot by that name
 base_chroot="$SUITE-$ARCHITECTURE-sbuild"

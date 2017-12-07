@@ -34,24 +34,36 @@ init_args() {
 
 relay_to_remote() {
 	local what
+	local fp
+	local OPTION
+	local i
+	local hostname
+
+	local sync_to_remote=()
+	local sync_from_remote=()
+	while getopts "t:f:" OPTION; do
+		case "$OPTION" in
+			t)
+				check_arg "sync-to-remote argument" "$OPTARG"
+				sync_to_remote+=("$OPTARG")
+				;;
+			f)
+				check_arg "sync-from-remote argument" "$OPTARG"
+				sync_from_remote+=("$OPTARG")
+				;;
+			*)
+				echo >&2 "Invalid option $OPTION"
+				exit 1
+		esac
+	done
+	shift $(($OPTIND - 1))
+	if [ "$#" -ne 1 ] ; then
+		echo >&2 "Invalid arguments: $*"
+		exit 1
+	fi
+
 	what="$1"
 	shift
-
-	local sync_to_remote
-	local sync_from_remote
-	local fp
-	local i
-
-	if [ -n "${1:-}" ]; then
-		sync_to_remote=("${!1}")
-	else
-		sync_to_remote=()
-	fi
-	if [ -n "${2:-}" ]; then
-		sync_from_remote=("${!2}")
-	else
-		sync_from_remote=()
-	fi
 
 	hostname=$(hostname -f)
 	if [ "$hostname" != $NODE_NAME ] ; then
