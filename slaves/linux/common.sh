@@ -70,7 +70,7 @@ relay_to_remote() {
 
 		case $NODE_NAME in
 			build-arm-0[0-3].torproject.org)
-				for i in "${sync_from_remote[@]}"; do
+				for i in "${sync_to_remote[@]}"; do
 					echo "[$hostname] Syncing $i to $NODE_NAME"
 					fp=$(realpath --relative-to=/home/jenkins ./$i)
 					ssh "$NODE_NAME" "mkdir -p $(dirname $fp)"
