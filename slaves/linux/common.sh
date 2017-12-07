@@ -33,40 +33,40 @@ init_args() {
 }
 
 relay_to_remote() {
-	local what
-	local fp
-	local OPTION
-	local i
 	local hostname
-
-	local sync_to_remote=()
-	local sync_from_remote=()
-	while getopts "t:f:" OPTION; do
-		case "$OPTION" in
-			t)
-				check_arg "sync-to-remote argument" "$OPTARG"
-				sync_to_remote+=("$OPTARG")
-				;;
-			f)
-				check_arg "sync-from-remote argument" "$OPTARG"
-				sync_from_remote+=("$OPTARG")
-				;;
-			*)
-				echo >&2 "Invalid option $OPTION"
-				exit 1
-		esac
-	done
-	shift $(($OPTIND - 1))
-	if [ "$#" -ne 1 ] ; then
-		echo >&2 "Invalid arguments: $*"
-		exit 1
-	fi
-
-	what="$1"
-	shift
-
 	hostname=$(hostname -f)
 	if [ "$hostname" != $NODE_NAME ] ; then
+		local what
+		local fp
+		local OPTION
+		local i
+
+		local sync_to_remote=()
+		local sync_from_remote=()
+		while getopts "t:f:" OPTION; do
+			case "$OPTION" in
+				t)
+					check_arg "sync-to-remote argument" "$OPTARG"
+					sync_to_remote+=("$OPTARG")
+					;;
+				f)
+					check_arg "sync-from-remote argument" "$OPTARG"
+					sync_from_remote+=("$OPTARG")
+					;;
+				*)
+					echo >&2 "Invalid option $OPTION"
+					exit 1
+			esac
+		done
+		shift $(($OPTIND - 1))
+		if [ "$#" -ne 1 ] ; then
+			echo >&2 "Invalid arguments: $*"
+			exit 1
+		fi
+
+		what="$1"
+		shift
+
 		case $NODE_NAME in
 			build-arm-0[0-3].torproject.org)
 				for i in "${sync_from_remote[@]}"; do
