@@ -6,7 +6,10 @@ set -x
 
 dn=$(dirname "$0")
 branch0=${dn#*/tor-ci-linux-}
-branch=${branch0%-rust}
+
+branch=${branch0%-rust}     # one of those two should work
+branch=${branch%-rust-arm} # one of those two should work
+
 if [ "$branch0" = "$dn" ] ||
    [ "$branch" = "$branch0" ]; then
   echo >&2 "Did not find branch from dirname $dn -> $branch0 -> $branch)"
