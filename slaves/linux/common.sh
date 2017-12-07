@@ -40,31 +40,38 @@ relay_to_remote() {
 	local sync_to_remote
 	local sync_from_remote
 	local fp
+	local i
 
-	sync_to_remote=${1:-}
-	[ "$#" -gt 0 ] && shift
-	sync_from_remote=${1:-}
-	[ "$#" -gt 0 ] && shift
+	if [ -n "${1:-}" ]; then
+		sync_to_remote=("${!1}")
+	else
+		sync_to_remote=()
+	fi
+	if [ -n "${2:-}" ]; then
+		sync_from_remote=("${!2}")
+	else
+		sync_from_remote=()
+	fi
 
 	hostname=$(hostname -f)
 	if [ "$hostname" != $NODE_NAME ] ; then
 		case $NODE_NAME in
 			build-arm-0[0-3].torproject.org)
-				if [ -n "$sync_to_remote" ]; then
-					echo "[$hostname] Syncing $sync_to_remote to $NODE_NAME"
-					fp=$(realpath --relative-to=/home/jenkins ./$sync_to_remote)
+				for i in "${sync_from_remote[@]}"; do
+					echo "[$hostname] Syncing $i to $NODE_NAME"
+					fp=$(realpath --relative-to=/home/jenkins ./$i)
 					ssh "$NODE_NAME" "mkdir -p $(dirname $fp)"
-					rsync -ravz --delete "$sync_to_remote/." "$NODE_NAME:$fp"
-				fi
+					rsync -ravz --delete "$i/." "$NODE_NAME:$fp"
+				done
 				echo "[$hostname] Forwarding build request to $NODE_NAME."
 				set -x
 				fp=$(realpath --relative-to=/home/jenkins .)
 				ssh -o BatchMode=yes -tt "$NODE_NAME" "(cd jenkins-tools && git pull) && mkdir -p '$fp' && cd '$fp' && NODE_NAME='$NODE_NAME' SUITE='$SUITE' ARCHITECTURE='$ARCHITECTURE' JOB_NAME='$JOB_NAME' ~/jenkins-tools/$what"
-				if [ -n "$sync_from_remote" ]; then
-					echo "[$hostname] Syncing $sync_from_remote from $NODE_NAME"
-					fp=$(realpath --relative-to=/home/jenkins ./$sync_from_remote)
-					rsync -ravz --delete "$NODE_NAME:$fp/." "$sync_from_remote"
-				fi
+				for i in "${sync_from_remote[@]}"; do
+					echo "[$hostname] Syncing $i from $NODE_NAME"
+					fp=$(realpath --relative-to=/home/jenkins ./$i)
+					rsync -ravz --delete "$NODE_NAME:$fp/." "$i"
+				done
 				echo "[$hostname] Exiting successfully."
 				exit 0
 				;;

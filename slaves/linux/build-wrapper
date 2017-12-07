@@ -23,8 +23,37 @@ fullpath=$(readlink -f "$0")
 basedir=$(dirname "$fullpath")
 . "$basedir/common.sh"
 
+usage()
+{
+cat << EOF
+usage: $0 [-t <sync-to-remote> [-t...]] [-f <sync-from-remote> [-f...]]
+EOF
+}
+sync_to_remote=()
+sync_from_remote=()
+while getopts "t:f:" OPTION; do
+	case "$OPTION" in
+		t)
+			check_arg "sync-to-remote argument" "$OPTARG"
+			sync_to_remote+=("$OPTARG")
+			;;
+		f)
+			check_arg "sync-from-remote argument" "$OPTARG"
+			sync_from_remote+=("$OPTARG")
+			;;
+		*)
+			echo >&2 "Invalid option $OPTION"
+			exit 1
+	esac
+done
+shift $(($OPTIND - 1))
+if [ "$#" -ge 1 ] ; then
+	echo >&2 "Invalid arguments: $*"
+	exit 1
+fi
+
 init_args
-relay_to_remote "slaves/linux/build-wrapper"
+relay_to_remote "slaves/linux/build-wrapper" sync_to_remote[@] sync_from_remote[@]
 
 # Check if we have an schroot by that name
 base_chroot="$SUITE-$ARCHITECTURE-sbuild"
