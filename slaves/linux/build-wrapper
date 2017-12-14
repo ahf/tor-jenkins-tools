@@ -27,10 +27,13 @@ basedir=$(dirname "$fullpath")
 usage()
 {
 cat << EOF
-usage: $0 [-t <sync-to-remote> [-t...]] [-f <sync-from-remote> [-f...]]
+usage: $0 [-t <sync-to-remote> [-t...]] [-f <sync-from-remote> [-f...]] [-k <env-variable> [-k]]
+  -k <NAME>     keeps environment variable NAME when calling chroot session
+  -t/-f <PATH>  sync PATH to/from remote when building remotely
 EOF
 }
-sync_args=()
+declare -a sync_args
+declare -a keep_env_names
 while getopts "t:f:" OPTION; do
 	case "$OPTION" in
 		t)
@@ -40,6 +43,10 @@ while getopts "t:f:" OPTION; do
 		f)
 			check_arg "sync-from-remote argument" "$OPTARG"
 			sync_args+=("-f" "$OPTARG")
+			;;
+		k)
+			check_arg "keep-env argument" "$OPTARG"
+			keep_env_names+=("$OPTARG")
 			;;
 		*)
 			echo >&2 "Invalid option $OPTION"
@@ -85,7 +92,7 @@ fi
 # pass extra environment
 declare -a keep_env
 keep_env+=("SESSION_ID=$chroot")
-for i in "$@" SUITE; do
+for i in "${keep_env_names[@]}" SUITE; do
 	keep_env+=("$i=${!i}")
 done
 
