@@ -34,7 +34,7 @@ EOF
 }
 declare -a sync_args
 declare -a keep_env_names
-while getopts "t:f:" OPTION; do
+while getopts "t:f:k:" OPTION; do
 	case "$OPTION" in
 		t)
 			check_arg "sync-to-remote argument" "$OPTARG"
