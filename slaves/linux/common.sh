@@ -8,7 +8,7 @@ check_arg() {
 		echo >&2 "No $name given."
 		exit 1
 	fi
-	if [[ "$arg" =~ [^A-Za-z0-9.-] ]]; then
+	if [[ "$arg" =~ [^A-Za-z0-9._-] ]]; then
 		echo >&2 "Invalid $name: $arg."
 		exit 1
 	fi
