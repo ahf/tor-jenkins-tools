@@ -92,7 +92,8 @@ fi
 # pass extra environment
 declare -a keep_env
 keep_env+=("SESSION_ID=$chroot")
-for i in "${keep_env_names[@]}" SUITE; do
+keep_env_names+=("SUITE")
+for i in "${keep_env_names[@]}"; do
 	keep_env+=("$i=${!i}")
 done
 
