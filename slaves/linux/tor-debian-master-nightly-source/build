@@ -161,7 +161,6 @@ case "$branch" in
     rm -f "tor_${build_version}-1.dsc"
     rm -f "tor_${build_version}-1"*".stretch+1.dsc"
     rm -f "tor_${build_version}-1"*".buster+1.dsc"
-    rm -f "tor_${build_version}-1"*"zesty+1.dsc"
     rm -f "tor_${build_version}-1"*"artful+1.dsc"
     rm -f "tor_${build_version}-1"*"bionic+1.dsc"
     ;;

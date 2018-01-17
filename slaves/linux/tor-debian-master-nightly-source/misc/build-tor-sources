@@ -223,11 +223,6 @@ backport_all() {
 	bp1 $pkg $dir $sid_debian_version xenial
 	bp2 $pkg $dir $origtar
 
-	# zesty (EOL: Jan 2018)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version zesty
-	bp2 $pkg $dir $origtar
-
 	# artful (EOL: Jul 2018)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version artful
