@@ -8,12 +8,15 @@ if [ "$#" != 1 ]; then
   exit 1
 fi
 
-MYLOGNAME="`basename "$0"`[$$]"
+MYLOGNAME="`basename "$0"`"
 info() {
-  logger -s -p user.info -t "$MYLOGNAME" "$1"
+  logger -s -p user.info "[$MYLOGNAME-$$-$BASHPID] $1"
+}
+infonostd() {
+  logger -p user.info "[$MYLOGNAME-$$-$BASHPID] $1"
 }
 croak() {
-  logger -s -p user.warn -t "$MYLOGNAME" "$1"
+  logger -s -p user.warn "[$MYLOGNAME-$$-$BASHPID] $1"
   exit 1
 }
 
@@ -57,20 +60,21 @@ case "$NODE_NAME" in
       # things are established
       flock -u 200
 
-      info "[$hostname] In child, liveness loop for $NODE_NAME starting.  pidnc1=$pidnc1, pidnc2=$pidnc2, mainpid=$mainpid"
       while : ; do
+        infonostd "[$hostname] In child[$BASHPID], in liveness loop for $NODE_NAME. pidnc1=$pidnc1, pidnc2=$pidnc2, mainpid=$mainpid"
         if ! kill -0 $pidnc1 || ! kill -0 $pidnc2 ; then
-          info "ssh pipe died, killing everything ($mainpid $pidnc2 $pidnc1)"
+          infonostd "ssh pipe died, killing everything ($mainpid $pidnc2 $pidnc1)"
           kill $mainpid $pidnc2 $pidnc1 || true
           exit
         elif ! kill -0 $mainpid; then
-          info "jenkins slave terminated, killing liveness loop ($pidnc2 $pidnc1)"
+          infonostd "jenkins slave terminated, killing liveness loop ($pidnc2 $pidnc1)"
           kill $pidnc2 $pidnc1 || true
           exit
         fi
         sleep 30
-      done
+      done > /dev/null < /dev/null 2> /dev/null 200< /dev/null
     ) & child=$!
+    disown
     flock -u 200
 
     if ! flock -x -w 10 200; then
