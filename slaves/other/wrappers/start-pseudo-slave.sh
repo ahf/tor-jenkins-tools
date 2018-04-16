@@ -8,6 +8,16 @@ if [ "$#" != 1 ]; then
   exit 1
 fi
 
+MYLOGNAME="`basename "$0"`[$$]"
+info() {
+  logger -s -p user.info -t "$MYLOGNAME" "$1"
+}
+croak() {
+  logger -s -p user.warn -t "$MYLOGNAME" "$1"
+  exit 1
+}
+
+
 NODE_NAME=${1:-}
 hostname=$(hostname -f)
 
@@ -19,7 +29,7 @@ pidjenkins=""
 
 case "$NODE_NAME" in
   build-arm-0[0-3].torproject.org)
-    echo >&2 "[$hostname] Updating jenkins-tools on $NODE_NAME:"
+    info "[$hostname] Updating jenkins-tools on $NODE_NAME:"
     ssh -o BatchMode=yes "$NODE_NAME" "(cd jenkins-tools && git pull)" < /dev/null
 
     # the lock is held by the liveness check child look until the loop is
@@ -29,7 +39,7 @@ case "$NODE_NAME" in
     exec 200< "$lock_flag"
     flock -x -w 0 200
 
-    echo >&2 "[$hostname] Starting liveness loop for $NODE_NAME"
+    info "[$hostname] Starting liveness loop for $NODE_NAME"
     mainpid="$$"
     (
       portlistennc=$(($RANDOM % 60000 + 1500))
@@ -40,9 +50,8 @@ case "$NODE_NAME" in
       ( while : ; do echo . ; sleep 10; done | nc localhost $portlistenssh ) > /dev/null < /dev/null 200< /dev/null & pidnc2=$!
 
       if ! kill -0 $pidnc1 || ! kill -0 $pidnc2 ; then
-        echo >&2 "Slave ssh not connected."
         rm -f "$lock_flag"
-        exit 1
+        croak "Slave ssh not connected."
       fi
 
       # things are established
@@ -50,13 +59,11 @@ case "$NODE_NAME" in
 
       while : ; do
         if ! kill -0 $pidnc1 || ! kill -0 $pidnc2 ; then
-          echo >&2 "ssh pipe died"
           kill $mainpid $pidnc2 $pidnc1 || true
-          exit
+          croak "ssh pipe died"
         elif ! kill -0 $mainpid; then
-          echo >&2 "jenkins slave terminated, killing liveness loop"
           kill $pidnc2 $pidnc1 || true
-          exit
+          croak "jenkins slave terminated, killing liveness loop"
         fi
       done
     ) & child=$!
@@ -65,20 +72,17 @@ case "$NODE_NAME" in
     if ! flock -x -w 10 200; then
       kill $child
       rm -f "$lock_flag"
-      echo >&2 "Could not acquire lock on flag file - probably slave ssh alive loop failed."
-      exit 1
+      croak "Could not acquire lock on flag file - probably slave ssh alive loop failed."
     fi
     if ! [ -e "$lock_flag" ]; then
       kill $child
-      echo >&2 "Lock flag is gone - probably slave ssh alive loop failed."
-      exit 1
+      croak "Lock flag is gone - probably slave ssh alive loop failed."
     fi
 
     rm -f "$lock_flag"
     exec java -jar ~/slave.jar
     ;;
   *)
-    echo >&2 "$0 Unknown node name $NODE_NAME"
-    exit 1
+    croak "$0 Unknown node name $NODE_NAME"
     ;;
 esac
