@@ -60,11 +60,13 @@ case "$NODE_NAME" in
       info "[$hostname] In child, liveness loop for $NODE_NAME starting.  pidnc1=$pidnc1, pidnc2=$pidnc2, mainpid=$mainpid"
       while : ; do
         if ! kill -0 $pidnc1 || ! kill -0 $pidnc2 ; then
+          info "ssh pipe died, killing everything ($mainpid $pidnc2 $pidnc1)"
           kill $mainpid $pidnc2 $pidnc1 || true
-          croak "ssh pipe died"
+          exit
         elif ! kill -0 $mainpid; then
+          info "jenkins slave terminated, killing liveness loop ($pidnc2 $pidnc1)"
           kill $pidnc2 $pidnc1 || true
-          croak "jenkins slave terminated, killing liveness loop"
+          exit
         fi
         sleep 30
       done
