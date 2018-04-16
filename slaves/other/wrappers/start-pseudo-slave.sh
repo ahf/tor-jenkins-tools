@@ -57,7 +57,7 @@ case "$NODE_NAME" in
       # things are established
       flock -u 200
 
-      info "[$hostname] In child, liveness loop for $NODE_NAME starting.  pidnc1=$pidnc1, pidnc2=$pidnc2"
+      info "[$hostname] In child, liveness loop for $NODE_NAME starting.  pidnc1=$pidnc1, pidnc2=$pidnc2, mainpid=$mainpid"
       while : ; do
         if ! kill -0 $pidnc1 || ! kill -0 $pidnc2 ; then
           kill $mainpid $pidnc2 $pidnc1 || true
