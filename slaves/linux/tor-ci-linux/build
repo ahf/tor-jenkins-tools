@@ -36,6 +36,8 @@ if [ "$fatal_warnings" -gt 0 ]; then default_flags="$default_flags --enable-gcc-
 
 configure_flags=${configure_flags:-"$default_flags"}
 
+! [ -e ~/.tor-jenkins-makeflags ] || . ~/.tor-jenkins-makeflags
+
 (cd tor && ./autogen.sh)
 
 set dummy ${configure_flags}
@@ -51,15 +53,15 @@ mkdir build-tree-tor RESULT
 (
 cd build-tree-tor
 ../tor/configure "$@"
-make -k && rc=0 || rc=$?
+make -k ${TOR_JENKINS_MAKEFLAGS:-} && rc=0 || rc=$?
 if [ "$rc" != 0 ]; then
   echo >&2 "============================="
   echo >&2 "make -k failed.  Re-running without -k to maybe see the error near the end of the build-log."
   echo >&2 "============================="
-  make
+  make ${TOR_JENKINS_MAKEFLAGS:-}
   exit $rc
 fi
-TOR_FUZZ_CORPORA=../fuzzing-corpora VERBOSE=yes make -k check
+TOR_FUZZ_CORPORA=../fuzzing-corpora VERBOSE=yes make -k ${TOR_JENKINS_MAKEFLAGS:-} check
 )
 
 cp build-tree-tor/src/or/tor RESULT
