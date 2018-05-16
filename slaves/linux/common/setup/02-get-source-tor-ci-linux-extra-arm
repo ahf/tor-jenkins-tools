@@ -33,11 +33,24 @@ if ! flock -e 200; then
   exit 1
 fi
 
-if [ -e "$gittree/config" ]; then
-  (cd "$gittree" && git remote update)
-else
-  git clone https://git.torproject.org/tor.git --mirror "$gittree"
-fi
+echo "Fetching source"
+# try this several times
+cnt=0
+while : ; do
+  if [ -e "$gittree/config" ]; then
+    (cd "$gittree" && git remote update) && break || true
+  else
+    git clone https://git.torproject.org/tor.git --mirror "$gittree" && break || true
+  fi
+
+  echo "Fetching source failed"
+  cnt=$((cnt + 1))
+  if [ $cnt -ge 5 ] ; then
+    echo "giving up on fetching source."
+    exit 1
+  fi
+  sleep 30
+done
 
 rm -rf tor
 git clone --shared --branch "$gitbranch" "$gittree" tor
