@@ -68,10 +68,11 @@ fudge_upstream_version() {
 pkg=tor
 pkggitdir="${pkg}"
 debgitdir="debian-${pkg}"
+debgitdirfull="$(readlink -f "$debgitdir")"
 
 thisdir=$(dirname "$0")
 thisdir=$(readlink -f "$thisdir")
-PATH="$debgitdir/debian/misc:$thisdir/misc:$PATH"
+PATH="$debgitdirfull/debian/misc:$thisdir/misc:$PATH"
 
 (cd "$pkggitdir" && git clean -dxf && git reset --hard HEAD)
 (cd "$debgitdir" && git clean -dxf && git reset --hard HEAD)
