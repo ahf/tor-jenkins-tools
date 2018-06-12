@@ -24,7 +24,7 @@ fatal_warnings=1
 case "$branch" in
   0.2.8)
     case "$SUITE" in
-      sid|buster|artful|bionic)
+      sid|buster|artful|bionic|cosmic)
         fatal_warnings=0
         ;;
     esac

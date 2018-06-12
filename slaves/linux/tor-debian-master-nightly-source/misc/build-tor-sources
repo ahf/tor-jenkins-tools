@@ -233,6 +233,11 @@ backport_all() {
 	bp1 $pkg $dir $sid_debian_version bionic
 	bp2 $pkg $dir $origtar
 
+	# cosmic (EOL: Jul 2019)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version cosmic
+	bp2 $pkg $dir $origtar
+
 	#################################################
 	## BPO
 	#################################################
