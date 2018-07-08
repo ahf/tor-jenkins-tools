@@ -64,5 +64,12 @@ fi
 TOR_FUZZ_CORPORA=../fuzzing-corpora VERBOSE=yes make -k ${TOR_JENKINS_MAKEFLAGS:-} check
 )
 
-cp build-tree-tor/src/or/tor RESULT
+if [ -e build-tree-tor/src/or/tor ] ; then
+  cp build-tree-tor/src/or/tor RESULT
+elif [ -e build-tree-tor/src/app/tor ] ; then
+  cp build-tree-tor/src/app/tor RESULT
+else
+  echo >&2 "Cannot find tor binary."
+  exit 1
+fi
 rm -rf build-tree-tor
