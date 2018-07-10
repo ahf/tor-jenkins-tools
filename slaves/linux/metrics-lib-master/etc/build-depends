@@ -6,9 +6,11 @@ default-jre
 git
 junit4
 libasm4-java
+libcommons-codec-java
 libcommons-compress-java
-libcommons-lang3-java
-libgoogle-gson-java
+libjackson2-annotations-java
+libjackson2-core-java
+libjackson2-databind-java
 libhamcrest-java
 liblogback-java
 liboro-java
