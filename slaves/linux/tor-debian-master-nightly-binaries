@@ -11,6 +11,8 @@ basedir=$(dirname "$fullpath")
 init_args
 relay_to_remote -t incoming -f RESULT "slaves/linux/tor-debian-master-nightly-binaries"
 
+echo "=== [build-wrapper] begin ==="
+
 get_metadata() {
   local dsc="$1"; shift
 
@@ -62,31 +64,40 @@ case "$ARCHITECTURE" in
     ;;
 esac
 
-BUILD_SUITE="$SUITE"
+echo "=== [build-wrapper] start actual build ==="
 
-dsc=$(dcmd --dsc "$srcchanges")
+set +e
+(
+  set -e
+  BUILD_SUITE="$SUITE"
+  dsc=$(dcmd --dsc "$srcchanges")
 
-mkdir build
-dcmd ln -v "$dsc" build
-cd build
-dsc=$(basename "$dsc")
-metadata=$(get_metadata "$dsc")
-read dscdist debian_version <<< "$metadata"
+  mkdir build
+  dcmd ln -v "$dsc" build
+  cd build
+  dsc=$(basename "$dsc")
+  metadata=$(get_metadata "$dsc")
+  read dscdist debian_version <<< "$metadata"
 
-sbuild --arch="$ARCHITECTURE" --dist="$BUILD_SUITE" --nolog --apt-update --add-depends=ccache $extra "$dsc"
+  sbuild --arch="$ARCHITECTURE" --dist="$BUILD_SUITE" --nolog --apt-update --add-depends=ccache $extra "$dsc"
 
-changes=$(ls -1 *.changes)
-if [ "$(echo "$changes" | wc -l)" != 1 ] || [ -z "$changes" ] ; then
-  echo >&2 "Weird number of changes files found."
-  exit 1
-fi
-changestool "$changes" setdistribution "$dscdist"
+  changes=$(ls -1 *.changes)
+  if [ "$(echo "$changes" | wc -l)" != 1 ] || [ -z "$changes" ] ; then
+    echo >&2 "Weird number of changes files found."
+    exit 1
+  fi
+  changestool "$changes" setdistribution "$dscdist"
 
-cd ..
+  cd ..
 
-mkdir RESULT
-dcmd ln -v "build/$changes" RESULT
-# the amd64 job copies the sources to the result
-if [ "$ARCHITECTURE" = "amd64" ]; then
-  dcmd ln -v "$srcchanges" RESULT
-fi
+  mkdir RESULT
+  dcmd ln -v "build/$changes" RESULT
+  # the amd64 job copies the sources to the result
+  if [ "$ARCHITECTURE" = "amd64" ]; then
+    dcmd ln -v "$srcchanges" RESULT
+  fi
+)
+rc="$?"
+
+echo "=== [build-wrapper] end ==="
+exit "$rc"

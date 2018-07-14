@@ -64,6 +64,8 @@ if [ "$(hostname -f)" != "${NODE_NAME:-}" ] ; then
   relay_to_remote "${sync_args[@]}" "slaves/linux/build-wrapper"
 fi
 
+echo "=== [build-wrapper] begin ==="
+
 # Check if we have an schroot by that name
 base_chroot="$SUITE-$ARCHITECTURE-sbuild"
 if ! schroot -l -c "$base_chroot" > /dev/null 2>&1; then
@@ -104,5 +106,16 @@ if [ -d "$f" ]; then env "${keep_env[@]}" run-parts "$f";
 echo "Build:"
 keep_env+=("PATH=/usr/lib/ccache:/usr/local/bin:/usr/bin:/bin")
 f="$jobdir/build"
-if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env "${keep_env[@]}" run-parts "$f";
-                else schroot --run-session --chroot "$chroot"         -- env "${keep_env[@]}" "$f"; fi
+
+echo "=== [build-wrapper] start actual build ==="
+
+set +e
+(
+  set -e
+  if [ -d "$f" ]; then schroot --run-session --chroot "$chroot"         -- env "${keep_env[@]}" run-parts "$f";
+                  else schroot --run-session --chroot "$chroot"         -- env "${keep_env[@]}" "$f"; fi
+)
+rc="$?"
+
+echo "=== [build-wrapper] end ==="
+exit "$rc"
