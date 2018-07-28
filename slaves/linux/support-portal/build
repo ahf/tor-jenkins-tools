@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+set -x
+set -u
+
+cleanup() {
+    if [ -n "$base" ]; then
+        cd "$base"
+        rm -rf support
+    fi
+}
+base=$(pwd)
+
+trap 'cleanup' EXIT
+rm -rf RESULT
+
+supportrev=$(cd support && git rev-parse HEAD)
+
+(
+cd support
+lektor build -O public
+mkdir -p project/trace
+( date -u
+  echo "Built on `hostname`."
+  echo "Based on support:$supportrev."
+) > project/trace/jenkins.torproject.org
+)
+
+mkdir RESULT
+tar -caf RESULT/support.tar.gz -C support/public .
