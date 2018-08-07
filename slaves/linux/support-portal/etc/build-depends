@@ -1,5 +1,5 @@
-lektor
-git
-python3-setuptools
 gettext
+git
+lektor
 python3-babel
+python3-setuptools
