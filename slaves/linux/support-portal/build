@@ -19,7 +19,7 @@ supportrev=$(cd support && git rev-parse HEAD)
 
 (
 cd support
-lektor build -O public
+LC_ALL=C.UTF-8 lektor build -O public
 mkdir -p project/trace
 ( date -u
   echo "Built on `hostname`."
