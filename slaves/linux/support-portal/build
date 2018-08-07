@@ -28,4 +28,4 @@ mkdir -p project/trace
 )
 
 mkdir RESULT
-tar -caf RESULT/support.tar.gz -C support/public .
+tar -caf RESULT/support.tar.gz support/public
