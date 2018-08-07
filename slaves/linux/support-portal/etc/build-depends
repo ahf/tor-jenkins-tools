@@ -1,3 +1,5 @@
 lektor
 git
 python3-setuptools
+gettext
+python3-babel
