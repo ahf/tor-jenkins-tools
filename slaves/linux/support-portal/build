@@ -19,6 +19,7 @@ supportrev=$(cd support && git rev-parse HEAD)
 
 (
 cd support
+LC_ALL=C.UTF-8 lektor plugin reinstall
 LC_ALL=C.UTF-8 lektor build -O public
 mkdir -p project/trace
 ( date -u
