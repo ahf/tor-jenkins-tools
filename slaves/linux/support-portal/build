@@ -10,7 +10,7 @@ cleanup() {
         rm -rf support
     fi
 }
-base=$(pwd)
+base="$(pwd)"
 
 trap 'cleanup' EXIT
 rm -rf RESULT
