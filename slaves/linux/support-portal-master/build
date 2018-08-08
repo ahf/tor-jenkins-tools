@@ -21,12 +21,15 @@ supportrev=$(cd support && git rev-parse HEAD)
 cd support
 LC_ALL=C.UTF-8 lektor plugin reinstall
 LC_ALL=C.UTF-8 lektor build -O public
-mkdir -p project/trace
+
+)
+
+mv support/public support-portal
+mkdir -p support-portal/project/trace
 ( date -u
   echo "Built on `hostname`."
   echo "Based on support:$supportrev."
-) > project/trace/jenkins.torproject.org
-)
+) > support-portal/project/trace/jenkins.torproject.org
 
 mkdir RESULT
-tar -caf RESULT/support-portal.tar.gz support/public
+tar -caf RESULT/support-portal.tar.gz support-portal
