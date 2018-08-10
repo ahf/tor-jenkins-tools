@@ -18,6 +18,10 @@ fi
 
 echo "Think we are in branch $branch."
 
+rm -rf cargo-home
+mkdir cargo-home
+export CARGO_HOME="$(pwd)/cargo-home"
+
 TOR_RUST_DEPENDENCIES="$(pwd)/ext-tor-rust-dependencies/crates" \
   branch="$branch" \
   configure_flags="--enable-gcc-warnings --disable-silent-rules --enable-rust" \
