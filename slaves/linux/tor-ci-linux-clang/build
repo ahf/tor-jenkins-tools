@@ -21,7 +21,7 @@ if [ "$rc" != 0 ]; then
   echo >&2 "============================="
   echo >&2 "make -k failed.  Re-running without -k to maybe see the error near the end of the build-log."
   echo >&2 "============================="
-  make ${TOR_JENKINS_MAKEFLAGS:-}
+  make ${TOR_JENKINS_MAKEFLAGS:-} || true
   echo "=== [build] FAILED: make ==="
   exit $rc
 fi
