@@ -37,13 +37,32 @@ configure_flags=${configure_flags:-"$default_flags"}
 rm -rf build-tree-tor
 mkdir build-tree-tor
 cd build-tree-tor
-../tor/configure $configure_flags
+
+echo "=== [build] running configure ==="
+../tor/configure $configure_flags && rc=0 || rc=$?
+if [ "$rc" != 0 ]; then
+  echo "=== [build] FAILED: configure ==="
+  echo >&2 "============================="
+  echo >&2 "Configure failed.  Trying to cat config.log."
+  echo >&2 "============================="
+  cat config.log || true
+  exit $rc
+fi
+
+echo "=== [build] running make ==="
 make -k ${TOR_JENKINS_MAKEFLAGS:-} && rc=0 || rc=$?
 if [ "$rc" != 0 ]; then
   echo >&2 "============================="
   echo >&2 "make -k failed.  Re-running without -k to maybe see the error near the end of the build-log."
   echo >&2 "============================="
   make ${TOR_JENKINS_MAKEFLAGS:-}
+  echo "=== [build] FAILED: make ==="
   exit $rc
 fi
-VERBOSE=yes make -k ${TOR_JENKINS_MAKEFLAGS:-} check
+
+echo "=== [build] running check ==="
+VERBOSE=yes make -k ${TOR_JENKINS_MAKEFLAGS:-} check && rc=0 || rc=$?
+if [ "$rc" != 0 ]; then
+  echo "=== [build] FAILED: check ==="
+  exit $rc
+fi
