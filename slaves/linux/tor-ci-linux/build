@@ -52,7 +52,19 @@ mkdir build-tree-tor RESULT
 
 (
 cd build-tree-tor
-../tor/configure "$@"
+
+echo "=== [build] running configure ==="
+../tor/configure "$@" && rc=0 || rc=$?
+if [ "$rc" != 0 ]; then
+  echo "=== [build] FAILED: configure ==="
+  echo >&2 "============================="
+  echo >&2 "Configure failed.  Trying to cat config.log."
+  echo >&2 "============================="
+  cat config.log || true
+  exit $rc
+fi
+
+echo "=== [build] running make ==="
 make -k ${TOR_JENKINS_MAKEFLAGS:-} && rc=0 || rc=$?
 if [ "$rc" != 0 ]; then
   echo >&2 "============================="
@@ -61,7 +73,14 @@ if [ "$rc" != 0 ]; then
   make ${TOR_JENKINS_MAKEFLAGS:-}
   exit $rc
 fi
-TOR_FUZZ_CORPORA=../fuzzing-corpora VERBOSE=yes make -k ${TOR_JENKINS_MAKEFLAGS:-} check
+
+echo "=== [build] running check ==="
+TOR_FUZZ_CORPORA=../fuzzing-corpora VERBOSE=yes make -k ${TOR_JENKINS_MAKEFLAGS:-} check && rc=0 || rc=$?
+if [ "$rc" != 0 ]; then
+  echo "=== [build] FAILED: check ==="
+  exit $rc
+fi
+
 )
 
 if [ -e build-tree-tor/src/or/tor ] ; then
