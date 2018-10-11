@@ -1,0 +1,12 @@
+asciidoc
+autoconf
+automake
+docbook-xml
+docbook-xsl
+libcap-dev
+libevent-dev
+liblzma-dev
+libssl-dev
+pkg-config
+xmlto
+zlib1g-dev
