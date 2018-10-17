@@ -1,9 +1,0 @@
-#!/bin/bash
-
-set -e
-set -x
-set -u
-
-thisscriptdir=$(dirname "$0")
-thisscriptdir=$(readlink -f "$thisscriptdir")
-"$thisscriptdir"/../tor-ci-mingwcross-master-test-native/build
