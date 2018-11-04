@@ -66,7 +66,6 @@ elif [ "$*" = "tor-ci-freebsd-amd64-0.3.5" ]; then exec ~/jenkins-tools/slaves/o
 elif [ "$*" = "tor-ci-freebsd-amd64-0.3.4" ]; then exec ~/jenkins-tools/slaves/other/tor-ci-freebsd-amd64-0.3.4/build; croak "Exec failed";
 elif [ "$*" = "tor-ci-freebsd-amd64-0.3.3" ]; then exec ~/jenkins-tools/slaves/other/tor-ci-freebsd-amd64-0.3.3/build; croak "Exec failed";
 elif [ "$*" = "tor-ci-freebsd-amd64-0.2.9" ]; then exec ~/jenkins-tools/slaves/other/tor-ci-freebsd-amd64-0.2.9/build; croak "Exec failed";
-elif [ "$*" = "tor-ci-freebsd-amd64-0.2.8" ]; then exec ~/jenkins-tools/slaves/other/tor-ci-freebsd-amd64-0.2.8/build; croak "Exec failed";
 elif [ "$*" = "tor-ci-freebsd-amd64-0.2.5" ]; then exec ~/jenkins-tools/slaves/other/tor-ci-freebsd-amd64-0.2.5/build; croak "Exec failed";
 fi
 
