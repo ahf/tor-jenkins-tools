@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -e
+set -x
+set -u
+
+cleanup() {
+    if [ -n "$base" ]; then
+        cd "$base"
+        rm -rf website
+    fi
+}
+base="$(pwd)"
+
+trap 'cleanup' EXIT
+rm -rf RESULT
+
+supportrev=$(cd website && git rev-parse HEAD)
+
+(
+cd support
+LC_ALL=C.UTF-8 lektor plugin reinstall
+LC_ALL=C.UTF-8 lektor build -O public
+
+)
+
+mv website/public portal
+mkdir -p portal/project/trace
+( date -u
+  echo "Built on `hostname`."
+  echo "Based on website:$websiterev."
+) > portal/project/trace/jenkins.torproject.org
+
+mkdir RESULT
+tar -caf RESULT/portal.tar.gz portal
