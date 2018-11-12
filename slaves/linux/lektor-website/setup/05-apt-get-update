@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+echo "Update package list."
+for i in 1 2 3 4 5; do
+	dd-schroot-cmd -c "$SESSION_ID" -- apt-get update && break;
+	sleep 30;
+done
