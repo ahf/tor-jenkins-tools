@@ -1,16 +1,1 @@
-#!/bin/bash
-
-set -e
-set -x
-
-dir=$(dirname "$0")
-bd="$dir/../etc/build-depends"
-
-if [ -e "$bd.$SUITE" ]; then
-	bd="$bd.$SUITE"
-elif ! [ -e "$bd" ]; then
-	echo >&2 "$bd does not exist."
-	exit 1
-fi
-
-dd-schroot-cmd -c "$SESSION_ID" -y -- apt-get install $(cat "$bd") ccache
+../../common/setup/15-install-build-depends
