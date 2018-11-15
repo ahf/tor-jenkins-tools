@@ -156,18 +156,6 @@ set -x
 set +e
 backport_all "$pkg" "$ddir" "$origtar" "$build_version-1"
 
-# we do not want stretch and later builds on 0.2.[765]
-case "$branch" in
-  "0.2.5")
-    rm -f "tor_${build_version}-1.dsc"
-    rm -f "tor_${build_version}-1"*".stretch+1.dsc"
-    rm -f "tor_${build_version}-1"*".buster+1.dsc"
-    rm -f "tor_${build_version}-1"*"artful+1.dsc"
-    rm -f "tor_${build_version}-1"*"bionic+1.dsc"
-    rm -f "tor_${build_version}-1"*"cosmic+1.dsc"
-    ;;
-esac
-
 include_orig="-sa"
 for i in *.dsc; do
     dpkg-source -x "$i"
