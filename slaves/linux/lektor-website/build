@@ -29,5 +29,9 @@ mkdir -p output/project/trace
   echo "Based on $gitrev."
 ) > output/project/trace/jenkins.torproject.org
 
+if [ -n "${GIT_BRANCH:-}" ]; then
+  echo "${GIT_BRANCH#origin/}" > output/project/trace/branch
+fi
+
 mkdir RESULT
 tar -caf RESULT/output.tar.gz output
