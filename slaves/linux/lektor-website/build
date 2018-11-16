@@ -14,7 +14,6 @@ base="$(pwd)"
 trap 'cleanup' EXIT
 rm -rf RESULT
 
-env
 gitrev=$(cd website && git rev-parse HEAD)
 
 (

@@ -99,6 +99,9 @@ for i in "${keep_env_names[@]}"; do
 	keep_env+=("$i=${!i}")
 done
 
+echo "Full env:"
+env
+
 echo "Setup:"
 f="$jobdir/setup"
 if [ -d "$f" ]; then env "${keep_env[@]}" run-parts "$f";
