@@ -95,6 +95,9 @@ fi
 declare -a keep_env
 keep_env+=("SESSION_ID=$chroot")
 keep_env_names+=("SUITE")
+if [ -n "${GIT_BRANCH:-}" ]; then
+	keep_env_names+=("GIT_BRANCH")
+fi
 for i in "${keep_env_names[@]}"; do
 	keep_env+=("$i=${!i}")
 done
