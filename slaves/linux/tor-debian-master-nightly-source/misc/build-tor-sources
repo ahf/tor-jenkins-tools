@@ -223,11 +223,6 @@ backport_all() {
 	bp1 $pkg $dir $sid_debian_version xenial
 	bp2 $pkg $dir $origtar
 
-	# artful (EOL: Jul 2018)
-	#################################################
-	bp1 $pkg $dir $sid_debian_version artful
-	bp2 $pkg $dir $origtar
-
 	# bionic (EOL: Apr 2023)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version bionic
@@ -236,6 +231,11 @@ backport_all() {
 	# cosmic (EOL: Jul 2019)
 	#################################################
 	bp1 $pkg $dir $sid_debian_version cosmic
+	bp2 $pkg $dir $origtar
+
+	# disco (EOL: Jan 2020)
+	#################################################
+	bp1 $pkg $dir $sid_debian_version disco
 	bp2 $pkg $dir $origtar
 
 	#################################################

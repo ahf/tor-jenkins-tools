@@ -72,6 +72,7 @@ zesty		zesty		1
 artful		artful		1
 bionic		bionic		1
 cosmic		cosmic		1
+disco		disco		1
 EOF
 )
 	if [ -z "$result" ] ; then
