@@ -15,6 +15,7 @@ trap 'cleanup' EXIT
 rm -rf RESULT
 
 gitrev=$(cd website && git rev-parse HEAD)
+echo "Building $GIT_BRANCH with rev $gitrev"
 
 (
 cd website
