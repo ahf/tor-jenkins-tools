@@ -102,8 +102,8 @@ for i in "${keep_env_names[@]}"; do
 	keep_env+=("$i=${!i}")
 done
 
-echo "Full env:"
-env
+#echo "Full env:"
+#env
 
 echo "Setup:"
 f="$jobdir/setup"
