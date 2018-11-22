@@ -101,13 +101,6 @@ hardening_backport() {
 	fi
 }
 
-remove_libseccomp() {
-	if grep -q libseccomp-dev debian/control; then
-		sed -i -e '/^Build-Depends/ s/, *libseccomp-dev\( *\[[^]]*\]\)\?//' debian/control
-		dch --append "Remove libseccomp-dev build dependency for backport."
-	fi
-}
-
 remove_systemd() {
 	if grep -q dh-systemd debian/control; then
 		sed -i -e '/^Build-Depends/ s/, *dh-systemd\( *\[[^]]*\]\)\?//' debian/control
@@ -204,12 +197,6 @@ backport_all() {
 	bp1 $pkg $dir $sid_debian_version jessie
 	bp2 $pkg $dir $origtar
 
-	# wheezy
-	#################################################
-	bp1 $pkg $dir $sid_debian_version wheezy
-	(cd $dir; remove_libseccomp)
-	(cd $dir; remove_systemd)
-	bp2 $pkg $dir $origtar
 
 
 	# trusty (EOL: April 2019)
