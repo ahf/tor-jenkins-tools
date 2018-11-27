@@ -10,11 +10,26 @@ cleanup() {
     fi
 }
 base="$(pwd)"
+repo="$(basename $base)"
 
 trap 'cleanup' EXIT
 rm -rf RESULT
 
-gitrev=$(cd website && git rev-parse HEAD)
+gitrev="$(cd website && git rev-parse HEAD)"
+
+case $repo in
+  lektor-website-support-any)
+    translationgit="$base/translation"
+    translationrev="$(cd translation && git rev-parse HEAD)"
+
+    echo "Syncing translation with rev $translationrev"
+
+    (
+    cd translation && cp *.po "$base/website/i18n/"
+    )
+    ;;
+esac
+
 echo "Building branch $GIT_BRANCH with rev $gitrev"
 
 (
