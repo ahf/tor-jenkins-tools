@@ -38,6 +38,7 @@ echo "Building branch $GIT_BRANCH with rev $gitrev"
 cd website
 LC_ALL=C.UTF-8 lektor plugin reinstall
 LC_ALL=C.UTF-8 lektor build -O public
+LC_ALL=C.UTF-8 lektor build -O public
 )
 
 mv website/public output
