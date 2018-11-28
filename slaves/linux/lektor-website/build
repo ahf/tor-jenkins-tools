@@ -12,6 +12,8 @@ cleanup() {
 base="$(pwd)"
 repo="$(basename $base)"
 
+echo "Building $repo"
+
 trap 'cleanup' EXIT
 rm -rf RESULT
 
