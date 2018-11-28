@@ -40,6 +40,8 @@ LC_ALL=C.UTF-8 lektor plugin reinstall
 LC_ALL=C.UTF-8 lektor build -O public
 echo "Build again to update locales"
 LC_ALL=C.UTF-8 lektor build -O public
+echo "Build a third time to update locales"
+LC_ALL=C.UTF-8 lektor build -O public
 )
 
 mv website/public output
