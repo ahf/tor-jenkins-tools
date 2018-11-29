@@ -9,6 +9,7 @@ cleanup() {
         cd "$base" && rm -rf website
     fi
 }
+
 base="$(pwd)"
 repo="$(basename $base)"
 
