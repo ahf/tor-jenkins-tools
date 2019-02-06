@@ -20,7 +20,7 @@ rm -rf RESULT
 
 gitrev="$(cd website && git rev-parse HEAD)"
 
-case $repo in
+case "$repo" in
   lektor-website-support-translation-any|lektor-website-tor-browser-manual-translation-any|lektor-website-tpo-translation-any|lektor-website-support-translation|lektor-website-tor-browser-manual-translation)
     translationgit="$base/translation"
     translationrev="$(cd translation && git rev-parse HEAD)"
