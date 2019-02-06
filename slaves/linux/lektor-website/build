@@ -20,8 +20,7 @@ rm -rf RESULT
 
 gitrev="$(cd website && git rev-parse HEAD)"
 
-case "$repo" in
-  lektor-website-support-translation-any|lektor-website-tor-browser-manual-translation-any|lektor-website-tpo-translation-any|lektor-website-support-translation|lektor-website-tor-browser-manual-translation)
+if [[ "$repo" =~ ^(lektor-website-support-translation-any|lektor-website-tor-browser-manual-translation-any|lektor-website-tpo-translation-any|lektor-website-support-translation|lektor-website-tor-browser-manual-translation)$ ]]; then
     translationgit="$base/translation"
     translationrev="$(cd translation && git rev-parse HEAD)"
 
@@ -31,7 +30,7 @@ case "$repo" in
     cd translation && cp -v *.po "$base/website/i18n/"
     )
     ;;
-esac
+fi
 
 echo "Building branch $GIT_BRANCH with rev $gitrev"
 
