@@ -63,7 +63,7 @@ BASE="`pwd`"
   fi
 
   cp src/test/test.exe "$BASE/RESULT/bin/"
-  cp src/test/test-child.exe "$BASE/RESULT/bin/"
+  cp src/test/test-process.exe "$BASE/RESULT/bin/"
 )
 
 cp -v UPSTREAM/bin/*dll RESULT/bin
